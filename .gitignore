@@ -1,0 +1,20 @@
+# signing
+*.jks
+*.keystore
+android/keystore.properties
+android/local.properties
+
+# build output
+android/.gradle/
+android/build/
+android/app/build/
+android/app/src/main/assets/www/
+
+# the web core is copied into assets at build time, never committed there
+node_modules/
+.DS_Store
+.idea/
+*.iml
+android/.kotlin/
+keystore.properties
+local.properties

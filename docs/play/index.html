@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Axiom</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<main id="stage">
+
+  <!-- ONBOARDING -->
+  <section class="screen" id="onboard" hidden>
+    <div class="ob-track" id="obTrack">
+      <article class="ob-card">
+        <p class="ob-mark">∴</p>
+        <p class="ob-line">A proof is a tree you grow by hand.</p>
+        <p class="ob-sub">The theorem sits at the top, unproven. You work backwards until every branch
+          ends in something already known.</p>
+      </article>
+      <article class="ob-card">
+        <p class="ob-mark">■</p>
+        <p class="ob-line">Every step is checked by a real verifier.</p>
+        <p class="ob-sub">There is a proof kernel inside this app. It refuses anything that does not follow.
+          When it says you proved it, you proved it.</p>
+      </article>
+      <article class="ob-card">
+        <p class="ob-mark">△</p>
+        <p class="ob-line">You will never type mathematics.</p>
+        <p class="ob-sub">Suppose, split, take cases, name a witness. Eight moves carry the whole game,
+          and the first one is waiting.</p>
+      </article>
+    </div>
+    <div class="ob-foot">
+      <div class="ob-dots" id="obDots"></div>
+      <button class="btn" id="obNext" type="button">Next</button>
+    </div>
+  </section>
+
+  <!-- MAP -->
+  <section class="screen view" id="v-map" hidden>
+    <header class="bar bar-plain">
+      <div class="bar-mid"><p class="bar-title">The Grand Map</p><p class="bar-sub" id="mapCount"></p></div>
+    </header>
+    <div class="scroller"><div id="mapList"></div>
+      <p class="colophon">Twenty five centuries, three regions, one kernel.</p>
+    </div>
+  </section>
+
+  <!-- DAILY -->
+  <section class="screen view" id="v-daily" hidden>
+    <header class="bar bar-plain">
+      <div class="bar-mid"><p class="bar-title" id="dDay"></p><p class="bar-sub" id="dDate"></p></div>
+    </header>
+    <div class="scroller">
+      <p class="streak" id="dStreak"></p>
+
+      <div class="envelope" id="dEnvelope" hidden>
+        <div class="env-seal" id="dSeal">∴</div>
+        <p class="env-tone" id="dTone"></p>
+        <p class="env-note">One theorem, the same one for everyone, chosen by today’s date.</p>
+        <button class="btn" id="dOpen" type="button">Break the seal</button>
+      </div>
+
+      <div class="result" id="dResult" hidden>
+        <p class="res-name" id="dName"></p>
+        <div class="grid" id="dShape"></div>
+        <p class="res-score" id="dScore"></p>
+        <p class="crown" id="dCrown"></p>
+        <button class="btn" id="dShare" type="button">Share the shape</button>
+        <p class="help">The grid shows the shape of your proof tree and nothing else. It gives no step away.</p>
+      </div>
+
+      <hr class="rule faint">
+      <p class="label">The last thirty days</p>
+      <div class="archive" id="dArchive"></div>
+      <p class="help">Dailies are computed from the date on this device, so they work with no connection
+        and everyone gets the same theorem.</p>
+    </div>
+  </section>
+
+  <!-- FORGE -->
+  <section class="screen view" id="v-forge" hidden>
+    <header class="bar bar-plain">
+      <div class="bar-mid"><p class="bar-title">The Forge</p><p class="bar-sub">Drills, built fresh each time</p></div>
+    </header>
+    <div class="scroller">
+      <p class="lead">Pick a move and the forge grows a new theorem around it, then checks that it can be
+        finished before handing it to you. Mastery fades over a few weeks, which is what brings you back.</p>
+      <div id="forgeList"></div>
+    </div>
+  </section>
+
+  <!-- SATCHEL -->
+  <section class="screen view" id="v-satchel" hidden>
+    <header class="bar bar-plain">
+      <div class="bar-mid"><p class="bar-title">Satchel</p><p class="bar-sub">Everything you have proved</p></div>
+    </header>
+    <div class="scroller">
+      <p class="lead">Every theorem you finish becomes a tool you keep. Tap any one to watch your own proof
+        rebuild itself, step by step.</p>
+      <div id="satchelList"></div>
+      <p class="empty" id="satchelEmpty" hidden>Nothing yet. Prove one theorem and it becomes a tool you keep.</p>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="screen view" id="v-profile" hidden>
+    <header class="bar bar-plain">
+      <div class="bar-mid"><p class="bar-title">You</p><p class="bar-sub">Kept on this device only</p></div>
+    </header>
+    <div class="scroller">
+      <div class="stats">
+        <div class="stat"><span class="k">Rigor</span><span class="v" id="pRigor"></span></div>
+        <div class="stat"><span class="k">Seals</span><span class="v" id="pSeals"></span></div>
+        <div class="stat"><span class="k">Gold crowns</span><span class="v" id="pGold"></span></div>
+        <div class="stat"><span class="k">Silver crowns</span><span class="v" id="pSilver"></span></div>
+        <div class="stat"><span class="k">Daily streak</span><span class="v" id="pStreak"></span></div>
+      </div>
+      <p class="help">Rigor is a local score. There is no server behind it and no leaderboard to climb,
+        so it only ever measures you against the shortest known proof.</p>
+
+      <hr class="rule faint">
+      <h2 class="h2">Settings</h2>
+      <div class="field row"><div><label for="setSound">Sound</label>
+        <p class="help">Woodblock clicks and the closing chord, synthesised on the device.</p></div>
+        <input type="checkbox" id="setSound"></div>
+      <div class="field row"><div><label for="setHaptics">Haptics</label>
+        <p class="help">A short thunk when a step snaps home.</p></div>
+        <input type="checkbox" id="setHaptics"></div>
+      <div class="field row"><div><label for="setNotify">Daily reminder</label>
+        <p class="help">One notification a day, only until you have solved that day’s proof. Off by default.</p></div>
+        <input type="checkbox" id="setNotify"></div>
+      <div class="field" id="setTimeRow" hidden><label for="setTime">Reminder time</label>
+        <input type="time" id="setTime"></div>
+
+      <hr class="rule faint">
+      <h2 class="h2">Your progress</h2>
+      <p class="help">Everything lives in this app’s storage on this phone. Nothing is uploaded, because
+        the app cannot reach the network at all.</p>
+      <div class="btnrow">
+        <button class="btn ghost small" id="exportBtn" type="button">Export as JSON</button>
+        <button class="btn ghost small danger" id="eraseBtn" type="button">Erase everything</button>
+      </div>
+
+      <p class="colophon">Axiom. Rigor as play.<br>Free, complete, and offline. Version 1.0</p>
+    </div>
+  </section>
+
+  <!-- PROOF BOARD -->
+  <section class="screen" id="v-board" hidden>
+    <header class="bar">
+      <button class="icon" id="bBack" type="button" aria-label="Leave this proof">Leave</button>
+      <div class="bar-mid"><p class="bar-title" id="bTitle"></p><p class="bar-sub" id="bSub"></p></div>
+      <button class="icon" id="bHint" type="button" aria-label="Ask for a hint">Hint</button>
+    </header>
+    <div class="statement" id="bStatement"></div>
+    <div class="treewrap" id="treeWrap"><div class="treefit" id="treeFit"><div class="tree" id="tree"></div></div></div>
+
+    <div class="replaybar" id="replayBar" hidden><p id="replayNote">Replaying</p></div>
+
+    <div class="panel" id="panel">
+      <div class="panel-head">
+        <div class="panel-top">
+          <p class="panel-goal" id="pGoal"></p>
+          <span class="panel-actions">
+            <span class="par" id="bPar"></span>
+            <button class="btn ghost small" id="bUndo" type="button">Undo</button>
+          </span>
+        </div>
+        <p class="panel-know" id="pKnowHead"></p>
+        <div class="chips" id="pKnow"></div>
+      </div>
+      <p class="panel-label">Moves</p>
+      <div class="moves" id="pMoves"></div>
+      <p class="panel-label" id="pToolsLabel">Satchel</p>
+      <div class="tools" id="pTools"></div>
+    </div>
+  </section>
+
+  <!-- VIGNETTE -->
+  <section class="screen" id="v-vignette" hidden>
+    <header class="bar">
+      <button class="icon" id="vgBack" type="button" aria-label="Back">Back</button>
+      <div class="bar-mid"><p class="bar-title">Keystone</p><p class="bar-sub" id="vgEra"></p></div>
+      <span class="icon spacer"></span>
+    </header>
+    <div class="scroller">
+      <h1 class="vg-title" id="vgTitle"></h1>
+      <div class="vg-body" id="vgBody"></div>
+    </div>
+  </section>
+</main>
+
+<nav id="tabs" hidden>
+  <button data-view="map" class="tab is-on" type="button">Map</button>
+  <button data-view="daily" class="tab" type="button">Daily</button>
+  <button data-view="forge" class="tab" type="button">Forge</button>
+  <button data-view="satchel" class="tab" type="button">Satchel</button>
+  <button data-view="profile" class="tab" type="button">You</button>
+</nav>
+
+<!-- term picker -->
+<div id="chooser" class="sheet" hidden>
+  <div class="sheet-panel">
+    <p class="sheet-title" id="chooserTitle"></p>
+    <p class="sheet-body" id="chooserNote" hidden></p>
+    <div class="chips" id="chooserList"></div>
+    <button class="btn ghost small" id="chooserCancel" type="button">Cancel</button>
+  </div>
+</div>
+
+<!-- hints -->
+<div id="hint" class="sheet" hidden>
+  <div class="sheet-panel">
+    <p class="sheet-title" id="hintTier"></p>
+    <p class="sheet-body" id="hintBody"></p>
+    <p class="sheet-body ghosted" id="hintExtra" hidden></p>
+    <p class="help" id="hintCost"></p>
+    <button class="btn ghost small" id="hintClose" type="button">Close</button>
+  </div>
+</div>
+
+<!-- victory -->
+<div id="victory" class="sheet" hidden>
+  <div class="sheet-panel">
+    <p class="v-eyebrow">Proved</p>
+    <p class="v-title" id="vTitle"></p>
+    <p class="v-verify" id="vVerify"></p>
+    <div class="v-nums">
+      <div><span class="v-n" id="vMoves"></span><span class="v-k">moves</span></div>
+      <div><span class="v-n" id="vPar"></span><span class="v-k">par</span></div>
+      <div><span class="v-n" id="vTime"></span><span class="v-k">taken</span></div>
+    </div>
+    <p class="crown" id="vCrown"></p>
+    <p class="v-rigor" id="vRigor"></p>
+    <p class="v-lemma" id="vLemma"></p>
+    <div class="btnrow">
+      <button class="btn" id="vNext" type="button">Next theorem</button>
+      <button class="btn ghost small" id="vShare" type="button">Share the shape</button>
+      <button class="btn ghost small" id="vVignette" type="button" hidden>Read the story</button>
+      <button class="btn ghost small" id="vBack" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<p id="toast" class="toast" hidden></p>
+
+<script src="js/kernel.js"></script>
+<script src="js/pars.js"></script>
+<script src="js/content.js"></script>
+<script src="js/store.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/forge.js"></script>
+<script src="js/board.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
