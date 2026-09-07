@@ -13,7 +13,7 @@ Prove real theorems by hand. A kernel checks every step. Daily puzzle, offline.
 <!-- 79 characters -->
 
 ## Full description (4000 max)
-<!-- 3814 characters -->
+<!-- 3872 characters -->
 Chess apps turned an intimidating discipline into a daily habit for a hundred million people. Axiom does
 the same for mathematical proof.
 
@@ -41,7 +41,7 @@ Forty four theorems across three regions. The Riverlands of Geometry is Euclid: 
 triangles, parallels, and the bridge of asses that stopped students for eighteen centuries. The Numbered
 Steppes is parity, divisibility, induction and Euclid's proof that the primes never run out. The Logic
 Fens is the shape of argument itself, from double negation to Peirce's law. Four of them are keystones
-with a short illustrated history you can read once you have earned it.
+with a short written history you can read once you have earned it.
 
 THE DAILY PROOF
 One theorem a day, the same one for everybody, worked out from the date on your device rather than

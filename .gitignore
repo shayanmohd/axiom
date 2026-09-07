@@ -21,3 +21,5 @@ local.properties
 
 # drive.js output
 test/shots/
+test/rshots/
+test/rshots-rm/

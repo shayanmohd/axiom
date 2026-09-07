@@ -45,8 +45,20 @@ const Board = (function () {
     if (cur.replay) cur.replayAtT = setTimeout(replayStep, 700);
   }
 
+  /** Jump the cascade to where it was going: every node and edge lit, no timers left. */
+  function stopCascade(finishIt) {
+    if (!cur || !cur.cascadeT) return;
+    cur.cascadeT.forEach(clearTimeout);
+    cur.cascadeT = null;
+    if (!finishIt) return;
+    const tree = $('#tree');
+    Array.prototype.forEach.call(tree.querySelectorAll('.node'), el => el.classList.add('lit'));
+    Array.prototype.forEach.call(tree.querySelectorAll('.edge'), e => e.classList.add('lit'));
+  }
+
   function close() {
     document.body.classList.remove('on-board');
+    stopCascade(false);
     if (cur) { clearTimeout(cur.victoryAt); clearTimeout(cur.replayAtT); }
     $('#victory').hidden = true;
     $('#hint').hidden = true;
@@ -596,13 +608,16 @@ const Board = (function () {
       return (nb._d || 0) - (na._d || 0);
     });
     Sound.cascade(crown === 'gold' ? 2 : crown === 'silver' ? 1 : 0);
-    byDepth.forEach((el, i) => setTimeout(() => {
+    // every one of these is held, because a cascade left running past the screen it belongs
+    // to buzzes the phone in a pocket and can light the edges of the next proof you open
+    cur.cascadeT = [];
+    byDepth.forEach((el, i) => cur.cascadeT.push(setTimeout(() => {
       el.classList.add('lit');
       if (i % 2 === 0) haptic(6, 40);
-    }, i * 70));
-    setTimeout(() => {
+    }, i * 70)));
+    cur.cascadeT.push(setTimeout(() => {
       Array.prototype.forEach.call(tree.querySelectorAll('.edge'), e => e.classList.add('lit'));
-    }, 120);
+    }, 120));
 
     let res = { gain: 0, improved: true };
     // { n: goal id, r: rule }. 1.0.0 recorded a flat rule list and replay still reads those,
@@ -716,6 +731,7 @@ const Board = (function () {
     if (!cur) return;
     cur.paused = true;
     clearTimeout(cur.replayAtT);
+    stopCascade(true);          // the proof is finished; show it finished rather than mid flight
   }
   function resume() {
     if (!cur || !cur.paused) return;

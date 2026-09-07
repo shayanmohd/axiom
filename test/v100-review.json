@@ -1,0 +1,135 @@
+{
+  "onboarded": true,
+  "installed": "2026-09-07",
+  "solved": {
+    "r01": {
+      "len": 1,
+      "par": 1,
+      "crown": "gold",
+      "hints": 0,
+      "ms": 1,
+      "at": 1788740936069,
+      "proof": [
+        {
+          "t": "use",
+          "src": "tool",
+          "ref": "eq-refl",
+          "n": 0,
+          "sub": {
+            "X": {
+              "f": "seg",
+              "a": [
+                {
+                  "f": "A",
+                  "a": []
+                },
+                {
+                  "f": "B",
+                  "a": []
+                }
+              ]
+            }
+          },
+          "dir": "back"
+        }
+      ]
+    },
+    "r02": {
+      "len": 3,
+      "par": 3,
+      "crown": "gold",
+      "hints": 0,
+      "ms": 1,
+      "at": 1788740940198,
+      "proof": [
+        {
+          "t": "suppose"
+        },
+        {
+          "t": "suppose"
+        },
+        {
+          "t": "use",
+          "src": "tool",
+          "ref": "eq-sym",
+          "n": 1,
+          "sub": {
+            "Y": {
+              "f": "b",
+              "a": []
+            },
+            "X": {
+              "f": "a",
+              "a": []
+            }
+          },
+          "dir": "back"
+        }
+      ]
+    },
+    "s05": {
+      "len": 3,
+      "par": 3,
+      "crown": "gold",
+      "hints": 0,
+      "ms": 1,
+      "at": 1788740945019,
+      "proof": [
+        {
+          "t": "suppose"
+        },
+        {
+          "t": "use",
+          "src": "tool",
+          "ref": "even-sq",
+          "n": 1,
+          "sub": {
+            "N": {
+              "f": "n",
+              "a": []
+            }
+          },
+          "dir": "back"
+        },
+        {
+          "t": "use",
+          "src": "tool",
+          "ref": "div2-even",
+          "n": 1,
+          "sub": {
+            "N": {
+              "f": "n",
+              "a": []
+            }
+          },
+          "dir": "back"
+        }
+      ]
+    }
+  },
+  "daily": {
+    "2026-09-07": {
+      "id": "s05",
+      "len": 3,
+      "par": 3,
+      "hints": 0,
+      "ms": 1,
+      "crown": "gold",
+      "shape": "🟨\n🟨\n🟨\n🟩"
+    }
+  },
+  "forge": {
+    "split": {
+      "done": 1,
+      "lastAt": 1788740949516
+    }
+  },
+  "rigor": 1045,
+  "seen": {},
+  "settings": {
+    "sound": true,
+    "haptics": false,
+    "notify": true,
+    "notifyTime": "07:30"
+  }
+}

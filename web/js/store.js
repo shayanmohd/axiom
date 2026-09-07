@@ -22,6 +22,21 @@ const Store = (function () {
     return out;
   };
 
+  /* The settings block was the one part copied over whole. Restore reads any file a user
+     hands it, and a notifyTime that is not a time reaches scheduleNotifications, where it
+     is split on a colon. Check each field against its own type. */
+  const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+  function cleanSettings(s) {
+    s = asMap(s);
+    const d = DEFAULTS.settings;
+    return {
+      sound: typeof s.sound === 'boolean' ? s.sound : d.sound,
+      haptics: typeof s.haptics === 'boolean' ? s.haptics : d.haptics,
+      notify: typeof s.notify === 'boolean' ? s.notify : d.notify,
+      notifyTime: typeof s.notifyTime === 'string' && TIME.test(s.notifyTime) ? s.notifyTime : d.notifyTime
+    };
+  }
+
   function sanitize(d) {
     d = asMap(d);
     return {
@@ -32,7 +47,7 @@ const Store = (function () {
       forge: clean(d.forge, v => v && typeof v === 'object' && typeof v.done === 'number'),
       rigor: typeof d.rigor === 'number' && isFinite(d.rigor) ? d.rigor : 1000,
       seen: clean(d.seen, () => true),
-      settings: Object.assign({}, DEFAULTS.settings, asMap(d.settings))
+      settings: cleanSettings(d.settings)
     };
   }
 
@@ -163,7 +178,7 @@ const Store = (function () {
   }
 
   /* ---------- settings, export, erase ---------- */
-  function settings(patch) { if (patch) { Object.assign(db.settings, patch); save(); } return db.settings; }
+  function settings(patch) { if (patch) { db.settings = cleanSettings(Object.assign({}, db.settings, patch)); save(); } return db.settings; }
   function onboarded(v) {
     if (v !== undefined) { db.onboarded = !!v; if (!db.installed) db.installed = today(); save(); }
     return db.onboarded;
