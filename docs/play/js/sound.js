@@ -8,6 +8,8 @@ const Sound = (function () {
     return ctx;
   }
   function enable(v) { on = !!v; if (on) ac(); }
+  /* The shell calls this on pause: nothing may still be sounding in the background. */
+  function suspend() { if (ctx && ctx.state === 'running') { const p = ctx.suspend(); if (p && p.catch) p.catch(function () {}); } }
 
   function tone(freq, t0, dur, gain, type, bend) {
     const c = ac(); if (!c) return;
@@ -47,5 +49,5 @@ const Sound = (function () {
     const notes = [1, 1.25, 1.5, 2, elegance >= 2 ? 3 : elegance >= 1 ? 2.5 : 2.25];
     notes.forEach((r, i) => tone(base * r, t + i * 0.085, 0.5 + i * 0.12, 0.11, 'triangle'));
   }
-  return { enable: enable, snap: snap, refuse: refuse, tick: tick, cascade: cascade };
+  return { enable: enable, suspend: suspend, snap: snap, refuse: refuse, tick: tick, cascade: cascade };
 })();

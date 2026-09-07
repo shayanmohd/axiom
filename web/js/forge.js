@@ -11,29 +11,32 @@ const Forge = (function () {
     for (let i = 0; i < n; i++) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
     return out;
   }
-  /** A small random propositional shape, so no two drills read alike. */
-  function shape(depth, pool) {
-    if (depth <= 0 || Math.random() < 0.45) return pick(pool);
-    const a = shape(depth - 1, pool), b = shape(depth - 1, pool);
+  /** A small random propositional shape. Each leaf takes its own letter from the deck,
+      so a drill never degenerates into "T and T and T", which is trivially true and
+      teaches nothing. The deck is consumed, so callers pass one big enough. */
+  function shape(depth, deck) {
+    const take = () => (deck.length ? deck.shift() : pick(ATOMS));
+    if (depth <= 0 || Math.random() < 0.45) return take();
+    const a = shape(depth - 1, deck), b = shape(depth - 1, deck);
     const op = pick(['&', '|', '->']);
     return '(' + a + ' ' + op + ' ' + b + ')';
   }
 
   const KINDS = [
     { id: 'split', name: 'Prove both halves', blurb: 'Taking an “and” apart in the goal.',
-      make: () => { const a = atoms(3); const X = shape(1, a), Y = shape(1, a);
+      make: () => { const a = atoms(5); const X = shape(1, a), Y = shape(1, a);
         return { statement: '(' + X + ') & (' + Y + ') -> (' + Y + ') & (' + X + ')', tools: [] }; } },
     { id: 'suppose', name: 'Suppose it', blurb: 'Taking the promise an arrow offers you.',
-      make: () => { const a = atoms(3); const X = shape(1, a), Y = shape(1, a);
+      make: () => { const a = atoms(5); const X = shape(1, a), Y = shape(1, a);
         return { statement: '(' + X + ') -> (' + Y + ') -> (' + X + ')', tools: [] }; } },
     { id: 'chain', name: 'Follow the arrows', blurb: 'Using an implication you already hold.',
       make: () => { const a = atoms(3);
         return { statement: '(' + a[0] + ' -> ' + a[1] + ') -> (' + a[1] + ' -> ' + a[2] + ') -> (' + a[0] + ' -> ' + a[2] + ')', tools: [] }; } },
     { id: 'cases', name: 'Take cases', blurb: 'Handling an “or” you were not allowed to choose.',
-      make: () => { const a = atoms(3); const X = shape(1, a), Y = shape(1, a);
+      make: () => { const a = atoms(5); const X = shape(1, a), Y = shape(1, a);
         return { statement: '(' + X + ') | (' + Y + ') -> (' + Y + ') | (' + X + ')', tools: [] }; } },
     { id: 'contradict', name: 'Assume the worst', blurb: 'Proof by supposing the goal is false.',
-      make: () => { const a = atoms(2); const X = shape(1, a);
+      make: () => { const a = atoms(3); const X = shape(1, a);
         return { statement: '~~(' + X + ') -> (' + X + ')', tools: [] }; } },
     { id: 'distribute', name: 'Push the “and” inside', blurb: 'Mixing conjunction and disjunction.',
       make: () => { const a = atoms(3);

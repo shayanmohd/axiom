@@ -3,20 +3,43 @@
   "org": "SocialSure Private Limited",
   "site": "https://shayanmohd.github.io/axiom/",
   "email": "shayanm2002@gmail.com",
-  "bg": "#F3ECDD", "fg": "#221B12", "muted": "#554A3B", "hair": "#D5C8AC", "accent": "#7D5710",
-  "bgDark": "#17140F", "fgDark": "#EDE4D0", "mutedDark": "#A99B82", "hairDark": "#3A3325", "accentDark": "#D7A94A",
+  "bg": "#14100F",
+  "fg": "#F6EEE9",
+  "muted": "#B3A49C",
+  "hair": "#3A302E",
+  "accent": "#FF7078",
+  "bgDark": "#14100F",
+  "fgDark": "#F6EEE9",
+  "mutedDark": "#B3A49C",
+  "hairDark": "#3A302E",
+  "accentDark": "#FF7078",
   "fontFamily": "'EB Garamond', Iowan Old Style, Palatino, Georgia, serif",
   "fontCss": "fonts/fonts.css",
   "permissions": [
-    ["VIBRATE", "a short mechanical tap when a proof step snaps into place, and a fainter one for each node as a finished proof lights up. It can be switched off in the app."],
-    ["POST_NOTIFICATIONS", "one optional reminder a day that the daily proof is waiting. It is off unless you turn it on, and it never contains a theorem or a hint."]
+    [
+      "VIBRATE",
+      "a short mechanical tap when a proof step snaps into place, and a fainter one for each node as a finished proof lights up. It can be switched off in the app."
+    ],
+    [
+      "POST_NOTIFICATIONS",
+      "one optional reminder a day that the daily proof is waiting. It is off unless you turn it on, and it never contains a theorem or a hint."
+    ]
   ],
   "network": false,
   "collects": [],
-  "storage": "Your proofs, crowns, daily results and settings are written to this app's private storage on this device. Nothing is uploaded, because the app has no way to reach a network. Uninstalling removes it all, so the app will export the whole record as JSON at any time.",
+  "storage": "Your proofs, crowns, daily results and settings are written to this app's private storage on this device. Nothing is uploaded, because the app has no way to reach a network. Uninstalling removes it all, so the app will export the whole record as a JSON file at any time, and restore it from that file on another phone.",
   "extra": [
-    ["Leaderboards", "There are none, and this is deliberate. Comparing proof lengths across players would need an account and a server, and Axiom has neither. Every crown you see is scored against the shortest proof the app's own verification kernel can find, computed on your phone."],
-    ["The daily proof", "Today's theorem is worked out from the date on your device using a fixed rule that is the same in every copy of the app. That is why everyone gets the same puzzle without anything being downloaded, and why the daily works with the phone in flight mode."],
-    ["Sharing a result", "The share button hands a short block of text to whatever app you choose. It contains the shape of your proof tree, your move count and the par, and it never leaves the device until you pick a destination yourself."]
+    [
+      "Leaderboards",
+      "There are none, and this is deliberate. Comparing proof lengths across players would need an account and a server, and Axiom has neither. Every crown you see is scored against the shortest proof the app's own verification kernel can find, computed on your phone."
+    ],
+    [
+      "The daily proof",
+      "Today's theorem is worked out from the date on your device using a fixed rule that is the same in every copy of the app. That is why everyone gets the same puzzle without anything being downloaded, and why the daily works with the phone in flight mode."
+    ],
+    [
+      "Sharing a result",
+      "The share button hands a short block of text to whatever app you choose. It contains the shape of your proof tree, your move count and the par, and it never leaves the device until you pick a destination yourself."
+    ]
   ]
 }

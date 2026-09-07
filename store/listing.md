@@ -70,8 +70,9 @@ wearing a work apron.
 WHAT IS NOT IN HERE
 No account, no sign in, no cloud, no leaderboard, no subscription and no advertising. Axiom does not
 request the internet permission, so Android will not let it open a connection at all. Everything you do
-stays in this app's storage on this phone, and you can export the whole record as JSON whenever you like.
-The game is free and complete: every region, every theorem, every day.
+stays in this app's storage on this phone. You can export the whole record as a JSON file and restore it
+on another phone, which is the only way your proofs ever move. The game is free and complete: every
+region, every theorem, every day.
 
 Bring a cup of tea. Some of these took people a thousand years.
 
@@ -91,5 +92,5 @@ Privacy policy: https://shayanmohd.github.io/axiom/privacy-policy.html
 - Target audience: 13 and over. Not designed for children.
 - Content rating questionnaire: no violence, no sexuality, no profanity, no controlled substances, no
   gambling, no user-generated content, no location, no sharing of personal information. Everyone.
-- AI-generated assets: none. The icon and feature graphic are drawn procedurally from a primitive spec in
-  code; the screenshots are captures of the running app.
+- AI-generated assets: none. The icon is a hand-written SVG and the feature graphic a hand-written HTML
+  page, both rendered to PNG by a headless browser; the screenshots are captures of the running app.

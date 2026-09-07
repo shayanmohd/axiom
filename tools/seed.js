@@ -32,7 +32,8 @@ function proveIt(thm) {
   if (!K.applySeq(st, proof)) throw new Error('replay failed ' + thm.id);
   const v = K.verify(st);
   if (!v.ok) throw new Error('verify failed ' + thm.id + ': ' + v.reason);
-  return { proof: proof, st: st };
+  // 1.0.1 records which goal each step went to, so a proof replays even out of order
+  return { proof: st.history.map(h => ({ n: h.node, r: h.rule })), st: st };
 }
 
 function shape(st) {
@@ -40,7 +41,7 @@ function shape(st) {
   (function walk(id, d) {
     const n = st.nodes[id]; if (!n) return;
     rows[d] = rows[d] || [];
-    rows[d].push(n.kids.length ? '\u{1F7E8}' : '\u{1F7E9}');
+    rows[d].push(n.kids.length ? '\u2B1B' : '\u{1F7E5}');
     n.kids.forEach(k => walk(k, d + 1));
   })(st.root, 0);
   return rows.map(r => r.join('')).join('\n');

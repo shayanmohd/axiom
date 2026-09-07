@@ -8,10 +8,10 @@ const sleep = 'const sleep = ms => new Promise(r => setTimeout(r, ms));';
 const tool = "const tool = n => [...document.querySelectorAll('#pTools .tile')].find(e => e.querySelector('.tl-n').textContent.indexOf(n) >= 0);";
 
 const spec = {
-  url: 'http://127.0.0.1:8909/index.html',
+  url: 'http://127.0.0.1:8828/index.html',
   out: path.join(ROOT, 'store', 'screenshots'),
   width: 540, height: 960, dpr: 2, wait: 900,
-  colorScheme: 'light',
+  colorScheme: 'dark',
   seed: '(function(){ try { if (localStorage.getItem("axiom.v1")) return; localStorage.setItem("axiom.v1", ' +
         JSON.stringify(seed) + '); } catch (e) {} })()',
   shots: [

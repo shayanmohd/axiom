@@ -17,9 +17,11 @@ const App = (function () {
     toast._t = setTimeout(() => { t.hidden = true; }, 2600);
   }
 
+  const ICON = (id, cls) => '<svg class="' + (cls || 'ic') + '" aria-hidden="true"><use href="#' + id + '"/></svg>';
+
   function go(v) {
     view = v;
-    VIEWS.forEach(x => { const el = $('#v-' + x); if (el) el.hidden = x !== v; });
+    VIEWS.forEach(x => { const el = $('#v-' + x); if (el) { el.hidden = x !== v; el.classList.remove('is-in'); } });
     $$('#tabs .tab').forEach(b => b.classList.toggle('is-on', b.dataset.view === v));
     const bare = (v === 'board' || v === 'vignette');
     $('#tabs').hidden = bare;
@@ -31,6 +33,8 @@ const App = (function () {
     if (v === 'profile') renderProfile();
     const sc = $('#v-' + v + ' .scroller');
     if (sc) sc.scrollTop = 0;
+    const scr = $('#v-' + v);
+    if (scr && !bare) { void scr.offsetWidth; scr.classList.add('is-in'); }
   }
 
   /* ---------------- the map ---------------- */
@@ -44,14 +48,17 @@ const App = (function () {
     const rec = Store.solved(thm.id);
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'seal-row' + (i % 2 ? ' right' : '');
+    b.className = 'seal-row' + (rec ? ' done' : '');
+    b.style.animationDelay = Math.min(i, 9) * 26 + 'ms';
     const state = rec ? (rec.crown === 'gold' ? 'gold' : 'proven') : 'open';
     b.innerHTML =
       '<span class="seal seal-' + state + (thm.keystone ? ' keystone' : '') + '">' +
-        (rec && rec.crown === 'gold' ? '<span class="cr">♛</span>' : '') +
-        '<span class="sn"></span></span>' +
+        (rec && rec.crown === 'gold' ? '<span class="cr">' + ICON('ic-crown') + '</span>' : '') +
+        (thm.keystone ? ICON('ic-keystone') : '<span class="sn"></span>') +
+      '</span>' +
       '<span class="seal-txt"><span class="seal-name"></span><span class="seal-sub"></span></span>';
-    b.querySelector('.sn').textContent = thm.keystone ? '★' : String(i + 1);
+    const sn = b.querySelector('.sn');
+    if (sn) sn.textContent = String(i + 1);
     b.querySelector('.seal-name').textContent = thm.name;
     b.querySelector('.seal-sub').textContent = rec
       ? plural(rec.len, 'move') + ', par ' + rec.par +
@@ -77,7 +84,10 @@ const App = (function () {
       sec.querySelector('.rg-name').textContent = r.name;
       sec.querySelector('.rg-era').textContent = r.era;
       sec.querySelector('.rg-blurb').textContent = r.blurb;
-      sec.querySelector('.rg-prog').textContent = open
+      sec.querySelector('.rg-prog').innerHTML = open
+        ? ICON('ic-daily') + '<span></span>'
+        : ICON('ic-sealed') + '<span></span>';
+      sec.querySelector('.rg-prog span').textContent = open
         ? done + ' of ' + total + ' sealed'
         : 'Sealed. ' + r.gate + ' proofs open the pass, and you have ' + Store.solvedCount() + '.';
       wrap.appendChild(sec);
@@ -87,7 +97,14 @@ const App = (function () {
       Content.THEOREMS.filter(t => t.region === r.id).forEach((t, i) => trail.appendChild(seal(t, i)));
       wrap.appendChild(trail);
     });
-    $('#mapCount').textContent = Store.solvedCount() + ' of ' + Content.THEOREMS.length + ' theorems proved';
+    const done = Store.solvedCount(), total = Content.THEOREMS.length;
+    $('#mapDone').textContent = done;
+    $('#mapTotal').textContent = 'of ' + total + ' proved';
+    // the mark closes as the map fills: apart at nothing proved, shut and lit at the end
+    const mark = $('#mapMark');
+    mark.classList.toggle('is-apart', done === 0);
+    mark.style.setProperty('--seam', Math.min(1, 0.25 + done / total).toFixed(2));
+    setTimeout(() => { $('#mapBar').style.width = Math.round(done / total * 100) + '%'; }, 60);
   }
 
   function nextTheorem(thm) {
@@ -118,11 +135,14 @@ const App = (function () {
                     'Thursday asks a little more.', 'Friday.', 'Saturday is the hard one.'][new Date().getDay()];
       $('#dTone').textContent = tone;
       $('#dOpen').onclick = () => {
+        if ($('#dOpen').disabled) return;
+        $('#dOpen').disabled = true;
         const seal = $('#dSeal');
         seal.classList.add('crack');
         Sound.snap();
         setTimeout(() => {
           seal.classList.remove('crack');
+          $('#dOpen').disabled = false;
           Board.open(thm, { mode: 'daily', date: date, onExit: () => go('daily') });
         }, 420);
       };
@@ -148,9 +168,9 @@ const App = (function () {
       b.className = 'arch' + (a.result ? ' done' : '') + (i === 0 ? ' today' : '');
       b.innerHTML = '<span class="ad"></span><span class="am"></span>';
       b.querySelector('.ad').textContent = Store.shortDate(a.date);
-      b.querySelector('.am').textContent = a.result
-        ? (a.result.crown === 'gold' ? '♛' : a.result.len)
-        : (i === 0 ? '·' : '–');
+      if (a.result && a.result.crown === 'gold') b.querySelector('.am').innerHTML = ICON('ic-crown');
+      else if (a.result) b.querySelector('.am').textContent = String(a.result.len);
+      else b.classList.add('unset');
       b.title = 'Daily ' + a.day;
       b.addEventListener('click', () => {
         if (a.result) { toast('Already proved on ' + Store.shortDate(a.date)); return; }
@@ -168,7 +188,8 @@ const App = (function () {
       r.className = 'shape-row';
       Array.from(row).forEach(ch => {
         const b = document.createElement('i');
-        b.className = 'blk ' + (ch === '\u{1F7E9}' ? 'leaf' : 'mid');
+        // 1.0.0 wrote green and yellow squares; 1.0.1 writes red and black. Both read here.
+        b.className = 'blk ' + (ch === '\u{1F7E9}' || ch === '\u{1F7E5}' ? 'leaf' : 'mid');
         r.appendChild(b);
       });
       el.appendChild(r);
@@ -183,6 +204,7 @@ const App = (function () {
       const m = Store.mastery(k.id);
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'forge-row';
+      b.style.animationDelay = Math.min(list.children.length, 9) * 26 + 'ms';
       b.innerHTML = '<span class="fg-h"><span class="fg-n"></span><span class="fg-p"></span></span>' +
                     '<span class="fg-b"></span><span class="meter"><i></i></span>';
       b.querySelector('.fg-n').textContent = k.name;
@@ -194,13 +216,13 @@ const App = (function () {
     });
   }
 
+  /* Growing a drill and proving it solvable takes about a millisecond, so there is no
+     loading state to show: the board simply opens. Only failure has anything to say. */
   function forgeStart(kind) {
-    toast('Building a drill');
-    setTimeout(() => {
-      const d = Forge.drill(kind);
-      if (!d) { toast('The forge could not shape that one. Try again.'); return; }
-      Board.open(d, { mode: 'forge', onExit: () => go('forge') });
-    }, 60);
+    let d = null;
+    try { d = Forge.drill(kind); } catch (e) { d = null; }
+    if (!d) { toast('The forge could not shape that one. Try again.'); return; }
+    Board.open(d, { mode: 'forge', onExit: () => go('forge') });
   }
 
   /* ---------------- satchel ---------------- */
@@ -219,7 +241,9 @@ const App = (function () {
         const rec = Store.solved(t.id);
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'sat-row';
-        b.innerHTML = '<span class="sat-l"></span><span class="sat-m"></span>';
+        b.style.animationDelay = Math.min(list.children.length, 9) * 24 + 'ms';
+        b.innerHTML = '<svg class="sat-ic" viewBox="0 0 108 108" aria-hidden="true"><use href="#mark"/></svg>' +
+                      '<span class="sat-tx"><span class="sat-l"></span><span class="sat-m"></span></span>';
         b.querySelector('.sat-l').textContent = t.lemma || t.name;
         b.querySelector('.sat-m').textContent = plural(rec.len, 'move') + ' against par ' + rec.par +
           (rec.crown === 'gold' ? ', gold crown' : rec.crown === 'silver' ? ', silver crown' : '');
@@ -285,11 +309,15 @@ const App = (function () {
     let i = 0;
     const cards = $$('#obTrack .ob-card');
     const dots = $('#obDots');
+    const art = $('#obArt .mark-live');
     dots.innerHTML = cards.map(() => '<i class="ob-dot"></i>').join('');
     const paint = () => {
       cards.forEach(c => { c.style.transform = 'translateX(' + (-i * 100) + '%)'; });
       $$('#obDots .ob-dot').forEach((d, j) => d.classList.toggle('on', j === i));
       $('#obNext').textContent = i === cards.length - 1 ? 'Begin' : 'Next';
+      // the two halves close over the three cards, which is the whole idea of the game
+      art.classList.toggle('is-apart', i < cards.length - 1);
+      if (i === cards.length - 1) { art.classList.remove('is-shut'); void art.offsetWidth; art.classList.add('is-shut'); }
     };
     paint();
     $('#obNext').onclick = () => {
@@ -297,7 +325,6 @@ const App = (function () {
       if (i < cards.length - 1) { i++; paint(); return; }
       Store.onboarded(true);
       $('#onboard').hidden = true;
-      document.body.classList.add('has-tabs');
       const first = Content.THEOREMS[0];
       Board.open(first, { onExit: () => go('map') });
     };
@@ -321,7 +348,12 @@ const App = (function () {
       }
       scheduleNotifications();
     });
-    $('#setTime').addEventListener('change', e => { Store.settings({ notifyTime: e.target.value }); scheduleNotifications(); });
+    $('#setTime').addEventListener('change', e => {
+      // an empty or half-typed time would silently fall back at schedule time; keep the last good one
+      if (!/^\d{2}:\d{2}$/.test(e.target.value)) { e.target.value = Store.settings().notifyTime; return; }
+      Store.settings({ notifyTime: e.target.value });
+      scheduleNotifications();
+    });
 
     $('#exportBtn').addEventListener('click', () => {
       const text = Store.exportJson();
@@ -337,6 +369,51 @@ const App = (function () {
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
       toast('Exported');
     });
+    /* Restore. The file is read, checked and shown to you before anything is replaced,
+       and the replacement itself needs a second tap. */
+    let pending = null;
+    function importNote(msg, kind) {
+      const el = $('#importNote');
+      el.textContent = msg || '';
+      el.className = 'inline-note' + (kind ? ' is-' + kind : '');
+      el.hidden = !msg;
+    }
+    $('#importBtn').addEventListener('click', () => {
+      if (pending) {
+        Store.restore(pending);
+        pending = null;
+        toast('Progress restored');
+        setTimeout(() => location.reload(), 500);
+        return;
+      }
+      importNote('');
+      $('#importFile').value = '';
+      $('#importFile').click();
+    });
+    $('#importFile').addEventListener('change', e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const r = new FileReader();
+      r.onerror = () => importNote('That file could not be read.', 'bad');
+      r.onload = () => {
+        const checked = Store.inspectJson(String(r.result || ''));
+        if (!checked.ok) { pending = null; $('#importBtn').textContent = 'Restore from a file'; importNote(checked.reason, 'bad'); return; }
+        pending = checked;
+        $('#importBtn').textContent = 'Tap again to replace everything';
+        importNote('That file holds ' + plural(checked.proofs, 'proof') + ' and ' +
+                   plural(checked.dailies, 'daily result') +
+                   (checked.exported ? ', saved on ' + Store.longDate(checked.exported) : '') +
+                   '. Restoring replaces what is on this device.', 'ok');
+        setTimeout(() => {
+          if (!pending) return;
+          pending = null;
+          $('#importBtn').textContent = 'Restore from a file';
+          importNote('');
+        }, 12000);
+      };
+      r.readAsText(file);
+    });
+
     $('#eraseBtn').addEventListener('click', () => {
       if ($('#eraseBtn').dataset.armed) { Store.erase(); toast('Everything erased'); location.reload(); return; }
       $('#eraseBtn').dataset.armed = '1';
@@ -348,7 +425,6 @@ const App = (function () {
       $('#onboard').hidden = false;
       onboard();
     } else {
-      document.body.classList.add('has-tabs');
       go('map');
     }
     scheduleNotifications();
@@ -357,19 +433,29 @@ const App = (function () {
   function back() {
     if (Board.back()) return true;
     if (view === 'vignette') { const f = vignetteAfter; vignetteAfter = null; (f || (() => go('map')))(); return true; }
-    if (!$('#onboard').hidden) return true;
+    if (!$('#onboard').hidden) return false;   // onboarding is the root; let the system have Back
     if (view !== 'map') { go('map'); return true; }
     return false;
   }
 
+  function onPause() {
+    Board.pause();
+    Sound.suspend();
+    clearTimeout(toast._t);
+    const t = $('#toast'); if (t) t.hidden = true;
+  }
+
   function onResume() {
+    Board.resume();
+    Sound.enable(Store.settings().sound);
     scheduleNotifications();
     if (view === 'daily') renderDaily();
+    if (view === 'map') renderMap();
   }
 
   document.addEventListener('DOMContentLoaded', init);
 
-  return { go: go, toast: toast, back: back, onResume: onResume, vignette: vignette,
+  return { go: go, toast: toast, back: back, onPause: onPause, onResume: onResume, vignette: vignette,
            nextTheorem: nextTheorem, forgeStart: forgeStart };
 })();
 

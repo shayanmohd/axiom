@@ -1,0 +1,8 @@
+A new look. Charcoal and crimson throughout, the mark of the interlocking proof on the map, and a proof
+tree that turns to cut glass when the last branch closes.
+
+Fixes: a proof built out of order now replays correctly in the satchel, leaving a proof mid cascade no
+longer misbehaves, Back works properly during onboarding, and the app stops its timers and sound when it
+goes to the background.
+
+New: restore a progress file you exported earlier.

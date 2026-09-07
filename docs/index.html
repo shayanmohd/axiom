@@ -12,36 +12,39 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
   :root {
-    --parch: #F3ECDD; --parch-2: #EAE1CD; --ink: #221B12; --ink-soft: #554A3B;
-    --ink-faint: #6E6149; --hair: #D5C8AC; --gold: #7D5710; --gold-line: #A8792A;
-    --gold-wash: rgba(168,121,42,0.13);
+    --parch: #14100F; --parch-2: #1D1817; --parch-3: #2F2624; --ink: #F6EEE9; --ink-soft: #B3A49C;
+    --ink-faint: #9C8D85; --hair: #3A302E; --gold: #FF7078; --gold-line: #E8434E;
+    --gold-wash: rgba(232,67,78,0.14); --bone: #F1E7E1;
     --serif: "EB Garamond", Iowan Old Style, Palatino, Georgia, serif;
     --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --parch: #17140F; --parch-2: #211C14; --ink: #EDE4D0; --ink-soft: #A99B82;
-            --ink-faint: #9D8E6B; --hair: #3A3325; --gold: #D7A94A; --gold-line: #C69A3E;
-            --gold-wash: rgba(215,169,74,0.14); }
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body { margin: 0; background: var(--parch); color: var(--ink); font-family: var(--serif);
-         font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+         font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+         background-image:
+           radial-gradient(70% 30% at 50% 0%, rgba(232,67,78,0.16), rgba(232,67,78,0) 70%),
+           linear-gradient(180deg, rgba(20,16,15,0) 0%, rgba(11,8,8,1) 62%),
+           repeating-linear-gradient(0deg, rgba(246,238,233,0.045) 0 1px, transparent 1px 56px),
+           repeating-linear-gradient(90deg, rgba(246,238,233,0.045) 0 1px, transparent 1px 56px);
+         background-attachment: fixed; }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
   a { color: var(--gold); }
   img { display: block; }
-  .shot { width: 100%; height: auto; border: 1px solid var(--hair); border-radius: 3px; }
+  .shot { width: 100%; height: auto; border: 1px solid var(--hair); border-radius: 10px;
+    box-shadow: 0 26px 50px -30px rgba(0,0,0,1); }
 
-  .cta { display: inline-block; background: var(--ink); color: var(--parch); text-decoration: none;
-         padding: 13px 26px; border-radius: 3px; font-family: var(--sans); font-size: 15px;
-         border: 1px solid var(--ink); transition: transform .15s ease; }
+  .cta { display: inline-block; background: var(--bone); color: #16100F; text-decoration: none;
+         padding: 13px 26px; border-radius: 8px; font-family: var(--sans); font-size: 15px;
+         border: 1px solid var(--bone); transition: transform .15s ease;
+         box-shadow: 0 16px 34px -22px rgba(0,0,0,.95); }
   .cta:active { transform: translateY(1px); }
   .eyebrow { font-family: var(--sans); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
              color: var(--gold); margin: 0 0 14px; }
 
   nav { display: flex; align-items: center; justify-content: space-between; height: 76px; }
   .mark { display: flex; align-items: center; gap: 11px; font-size: 19px; letter-spacing: .01em; }
-  .mark svg { width: 24px; height: 24px; display: block; }
+  .mark svg { width: 26px; height: 26px; display: block; }
   nav .links a { color: var(--ink-soft); text-decoration: none; font-family: var(--sans); font-size: 14px;
                  margin-left: 22px; }
   nav .links a:hover { color: var(--ink); }
@@ -74,13 +77,13 @@
     font-size: 13px; display: flex; align-items: center; justify-content: center; }
   .howto li b { color: var(--ink); font-weight: 500; }
   .diagram { width: 100%; height: auto; }
-  .diagram .box { fill: var(--parch-2); stroke: var(--ink-soft); stroke-width: 1.4; }
-  .diagram .box.done { fill: var(--gold-wash); stroke: var(--gold-line); }
+  .diagram .box { fill: var(--parch-3); stroke: var(--ink-soft); stroke-width: 1.4; }
+  .diagram .box.done { fill: var(--bone); stroke: var(--gold-line); }
   .diagram .edge { fill: none; stroke: var(--hair); stroke-width: 1.4; }
   .diagram text { font-family: var(--serif); font-size: 15px; fill: var(--ink); }
   .diagram text.rule { font-family: var(--sans); font-size: 10.5px; letter-spacing: .1em; fill: var(--ink-faint);
     paint-order: stroke; stroke: var(--parch); stroke-width: 5px; stroke-linejoin: round; }
-  .diagram text.done { fill: var(--gold); }
+  .diagram text.done { fill: #8E1523; }
 
   /* 4. gallery: one tall, two stacked */
   .gallery { padding: 0 0 104px; }
@@ -139,11 +142,16 @@
   <nav>
     <span class="mark">
       <svg viewBox="0 0 108 108" aria-hidden="true">
-        <path d="M54 44 L30 74" stroke="currentColor" stroke-width="7" stroke-linecap="round" fill="none"/>
-        <path d="M54 44 L78 74" stroke="currentColor" stroke-width="7" stroke-linecap="round" fill="none"/>
-        <rect x="44" y="22" width="20" height="20" rx="3" fill="#A8792A"/>
-        <circle cx="30" cy="79" r="8" fill="currentColor"/>
-        <circle cx="78" cy="79" r="8" fill="currentColor"/>
+        <defs>
+          <linearGradient id="nb" x1=".1" y1="0" x2=".7" y2="1">
+            <stop offset="0" stop-color="#FFFAF6"/><stop offset=".55" stop-color="#EADFD7"/><stop offset="1" stop-color="#B9A49B"/>
+          </linearGradient>
+          <linearGradient id="nc" x1=".2" y1="0" x2=".9" y2="1">
+            <stop offset="0" stop-color="#F4515C"/><stop offset=".5" stop-color="#D0212F"/><stop offset="1" stop-color="#7E1220"/>
+          </linearGradient>
+        </defs>
+        <path d="M26 54 L54 26 L54 43 L66 49 L66 59 L54 65 L54 82 Z" fill="url(#nb)"/>
+        <path d="M54 26 L82 54 L54 82 L54 65 L66 59 L66 49 L54 43 Z" fill="url(#nc)"/>
       </svg>
       Axiom
     </span>
@@ -185,8 +193,8 @@
         smaller thing left to show.</li>
       <li><b>Reach for a tool.</b> Drag an axiom onto a goal. If it fits, the step clicks home. If it does
         not, it bounces back and nothing is lost.</li>
-      <li><b>Ground out.</b> When every leaf rests on something you already hold, the tree lights up from the
-        leaves and the theorem turns to glass.</li>
+      <li><b>Ground out.</b> When every leaf rests on something you already hold, the tree lights from the
+        leaves upward and the theorem turns to cut stone.</li>
     </ol>
   </div>
   <svg class="diagram" viewBox="0 0 560 330" role="img"
@@ -219,15 +227,15 @@
   <div class="strip">
     <figure class="reveal">
       <img class="shot" src="shots/03-map.png" width="1080" height="1920"
-           alt="The Grand Map: a trail of wax seals through the Riverlands of Geometry, gold where a proof earned a crown.">
-      <figcaption>Amber seals are open, gold ones are proved, and a crown means you matched the shortest
-        proof the kernel can find without asking for a hint.</figcaption>
+           alt="The Grand Map: the mark of the interlocking proof, a progress bar, and a trail of seals through the Riverlands of Geometry.">
+      <figcaption>An open seal is a dark ring. A proved one is cut stone, and a crown on it means you
+        matched the shortest proof the kernel can find without asking for a hint.</figcaption>
     </figure>
     <figure class="reveal">
       <img class="shot" src="shots/02-victory.png" width="1080" height="1920"
-           alt="A finished proof lit up in gold, with the result card showing five moves against a par of five.">
-      <figcaption>The cascade fires when the last leaf grounds out. It is earned by logic and never by
-        luck, which is the whole reason it does not get old.</figcaption>
+           alt="A finished proof, every node turned to pale stone with crimson edges, and a result card showing five moves against a par of five.">
+      <figcaption>The cascade fires when the last leaf grounds out and the whole tree turns to cut stone.
+        It is earned by logic and never by luck, which is why it does not get old.</figcaption>
     </figure>
     <figure class="reveal">
       <img class="shot" src="shots/04-daily.png" width="1080" height="1920"
@@ -280,7 +288,8 @@
     <div class="row">
       <div class="k">Free and complete</div>
       <p class="v">Every region, every theorem, the daily proof, the forge and the whole satchel. No
-        purchases, no energy, no advertising, and nothing held back behind a pass.</p>
+        purchases, no energy, no advertising, and nothing held back behind a pass. Your record exports to a
+        JSON file and restores from one, which is the only way it ever leaves the phone.</p>
     </div>
   </div>
 </section>

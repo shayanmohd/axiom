@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
 <title>Axiom</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="fonts/fonts.css">
@@ -11,25 +11,139 @@
 </head>
 <body>
 
+<!-- Every icon in Axiom is drawn here, in one stroke language: 1.7 units in a 24 box,
+     round caps, round joins, no fills except where a shape is meant to be solid. -->
+<svg id="glyphs" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mk-bone" x1="0.1" y1="0" x2="0.7" y2="1">
+      <stop offset="0" stop-color="#FFFAF6"/><stop offset="0.55" stop-color="#EADFD7"/><stop offset="1" stop-color="#B9A49B"/>
+    </linearGradient>
+    <linearGradient id="mk-crim" x1="0.2" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#F4515C"/><stop offset="0.5" stop-color="#D0212F"/><stop offset="1" stop-color="#7E1220"/>
+    </linearGradient>
+    <linearGradient id="mk-seam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD6CF"/><stop offset="0.45" stop-color="#FF5D5A"/><stop offset="1" stop-color="#B01427"/>
+    </linearGradient>
+    <clipPath id="mk-solid"><path d="M26 54 L54 26 L82 54 L54 82 Z"/></clipPath>
+  </defs>
+
+  <!-- the interlock: two halves of one solid, the seam between them lit -->
+  <symbol id="mark" viewBox="0 0 108 108">
+    <path d="M26 54 L54 26 L54 43 L66 49 L66 59 L54 65 L54 82 Z" fill="url(#mk-bone)"/>
+    <path d="M54 26 L82 54 L54 82 L54 65 L66 59 L66 49 L54 43 Z" fill="url(#mk-crim)"/>
+    <g clip-path="url(#mk-solid)">
+      <path d="M54 24 L54 43 L66 49 L66 59 L54 65 L54 84" fill="none" stroke="#FF4B4F" stroke-width="8"
+            stroke-linejoin="round" opacity="0.34"/>
+      <path d="M54 24 L54 43 L66 49 L66 59 L54 65 L54 84" fill="none" stroke="url(#mk-seam)" stroke-width="3.4"
+            stroke-linejoin="round"/>
+      <path d="M54 24 L54 43 L66 49" fill="none" stroke="#FFE7E2" stroke-width="1.5" stroke-linejoin="round" opacity="0.9"/>
+    </g>
+    <path d="M28.5 53.4 L54 28" fill="none" stroke="#FFFDFB" stroke-width="1.7" stroke-linecap="round" opacity="0.8"/>
+    <path d="M55.6 28.4 L80 53" fill="none" stroke="#FF9A96" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+  </symbol>
+
+  <!-- the same solid, drawn as an outline, for empty and locked states -->
+  <symbol id="mark-open" viewBox="0 0 108 108">
+    <path d="M26 54 L54 26 L82 54 L54 82 Z" fill="none" stroke="currentColor" stroke-width="4.5"
+          stroke-linejoin="round" opacity="0.75"/>
+    <path d="M54 26 L54 43 L66 49 L66 59 L54 65 L54 82" fill="none" stroke="currentColor" stroke-width="3.4"
+          stroke-linejoin="round" stroke-dasharray="7 6" opacity="0.5"/>
+  </symbol>
+
+  <symbol id="ic-map" viewBox="0 0 24 24">
+    <path d="M12 2.9 L14.4 5.3 L12 7.7 L9.6 5.3 Z"/>
+    <path d="M12 7.9 v2.3 M12 10.2 C12 12.4 6.8 12 6.8 14.3 M12 10.2 C12 12.4 17.2 12 17.2 14.3"/>
+    <path d="M6.8 14.5 L8.9 16.6 L6.8 18.7 L4.7 16.6 Z"/>
+    <path d="M17.2 14.5 L19.3 16.6 L17.2 18.7 L15.1 16.6 Z"/>
+  </symbol>
+  <symbol id="ic-daily" viewBox="0 0 24 24">
+    <path d="M12 3.4 L20.6 12 L12 20.6 L3.4 12 Z"/>
+    <path d="M12 3.4 v4.2 l3 1.6 v3.4 l-3 1.6 v6.4"/>
+  </symbol>
+  <symbol id="ic-forge" viewBox="0 0 24 24">
+    <path d="M14.4 4.6 L21.4 12 L14.4 19.4 L7.4 12 Z"/>
+    <path d="M4.6 8.4 h2.2 M2.6 12 h3.2 M4.6 15.6 h2.2"/>
+  </symbol>
+  <symbol id="ic-satchel" viewBox="0 0 24 24">
+    <path d="M4.6 8.8 h14.8 l-1.1 9.5 a1.7 1.7 0 0 1 -1.7 1.5 H7.4 a1.7 1.7 0 0 1 -1.7 -1.5 Z"/>
+    <path d="M8.7 8.8 V7.1 a3.3 3.3 0 0 1 6.6 0 v1.7"/>
+    <path d="M9.6 12.6 h4.8"/>
+  </symbol>
+  <symbol id="ic-you" viewBox="0 0 24 24">
+    <path d="M3.6 18.4 L9 12.6 L12.8 15.6 L20.4 6.4"/>
+    <path d="M15.8 6.4 h4.6 v4.6"/>
+  </symbol>
+
+  <symbol id="ic-crown" viewBox="0 0 24 24">
+    <path d="M4.4 18.4 L2.9 7.4 L7.6 11.1 L12 4.3 L16.4 11.1 L21.1 7.4 L19.6 18.4 Z"/>
+  </symbol>
+  <symbol id="ic-keystone" viewBox="0 0 24 24">
+    <path d="M8.3 19.6 L5.9 8.8 L12 4.1 L18.1 8.8 L15.7 19.6 Z"/>
+    <path d="M9.9 13.9 h4.2"/>
+  </symbol>
+  <symbol id="ic-qed" viewBox="0 0 24 24">
+    <path d="M6.8 6.8 h10.4 v10.4 H6.8 Z" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="ic-sealed" viewBox="0 0 24 24">
+    <path d="M12 3.4 L20.6 12 L12 20.6 L3.4 12 Z"/>
+    <path d="M8.4 12 h7.2"/>
+  </symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24"><path d="M14.6 5.2 L7.8 12 l6.8 6.8"/></symbol>
+  <symbol id="ic-hint" viewBox="0 0 24 24">
+    <path d="M12 3.4 L20.6 12 L12 20.6 L3.4 12 Z" stroke-dasharray="3.2 3.4"/>
+    <path d="M12 8.6 L15.4 12 L12 15.4 L8.6 12 Z" opacity="0.5"/>
+  </symbol>
+  <symbol id="ic-undo" viewBox="0 0 24 24">
+    <path d="M4.4 9.4 h9.4 a5.2 5.2 0 1 1 0 10.4 H9.2"/>
+    <path d="M8.3 5.1 L4 9.4 l4.3 4.3"/>
+  </symbol>
+  <symbol id="ic-share" viewBox="0 0 24 24">
+    <path d="M12 15.4 V3.9"/><path d="M8 7.9 L12 3.9 l4 4"/>
+    <path d="M5.4 12.8 v6.6 h13.2 v-6.6"/>
+  </symbol>
+  <symbol id="ic-export" viewBox="0 0 24 24">
+    <path d="M12 3.9 v11.5"/><path d="M8 11.4 L12 15.4 l4 -4"/>
+    <path d="M5.4 19.4 h13.2"/>
+  </symbol>
+  <symbol id="ic-restore" viewBox="0 0 24 24">
+    <path d="M12 15.4 V3.9"/><path d="M8 7.9 L12 3.9 l4 4"/>
+    <path d="M5.4 19.4 h13.2"/>
+  </symbol>
+  <symbol id="ic-erase" viewBox="0 0 24 24">
+    <path d="M4.8 7.2 h14.4"/><path d="M9.4 7.2 V5.3 h5.2 v1.9"/>
+    <path d="M6.8 7.2 L7.8 19 h8.4 l1 -11.8"/>
+  </symbol>
+</svg>
+
 <main id="stage">
 
   <!-- ONBOARDING -->
   <section class="screen" id="onboard" hidden>
+    <div class="ob-art" id="obArt">
+      <svg class="mark-live" viewBox="0 0 108 108" aria-hidden="true">
+        <g class="mk-half mk-l"><path d="M26 54 L54 26 L54 43 L66 49 L66 59 L54 65 L54 82 Z" fill="url(#mk-bone)"/></g>
+        <g class="mk-half mk-r"><path d="M54 26 L82 54 L54 82 L54 65 L66 59 L66 49 L54 43 Z" fill="url(#mk-crim)"/></g>
+        <g class="mk-seam" clip-path="url(#mk-solid)">
+          <path d="M54 24 L54 43 L66 49 L66 59 L54 65 L54 84" fill="none" stroke="#FF4B4F" stroke-width="9" stroke-linejoin="round" opacity="0.3"/>
+          <path d="M54 24 L54 43 L66 49 L66 59 L54 65 L54 84" fill="none" stroke="url(#mk-seam)" stroke-width="3.4" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    </div>
     <div class="ob-track" id="obTrack">
       <article class="ob-card">
-        <p class="ob-mark">∴</p>
+        <p class="ob-step">One</p>
         <p class="ob-line">A proof is a tree you grow by hand.</p>
         <p class="ob-sub">The theorem sits at the top, unproven. You work backwards until every branch
           ends in something already known.</p>
       </article>
       <article class="ob-card">
-        <p class="ob-mark">■</p>
+        <p class="ob-step">Two</p>
         <p class="ob-line">Every step is checked by a real verifier.</p>
         <p class="ob-sub">There is a proof kernel inside this app. It refuses anything that does not follow.
           When it says you proved it, you proved it.</p>
       </article>
       <article class="ob-card">
-        <p class="ob-mark">△</p>
+        <p class="ob-step">Three</p>
         <p class="ob-line">You will never type mathematics.</p>
         <p class="ob-sub">Suppose, split, take cases, name a witness. Eight moves carry the whole game,
           and the first one is waiting.</p>
@@ -43,26 +157,42 @@
 
   <!-- MAP -->
   <section class="screen view" id="v-map" hidden>
-    <header class="bar bar-plain">
-      <div class="bar-mid"><p class="bar-title">The Grand Map</p><p class="bar-sub" id="mapCount"></p></div>
-    </header>
-    <div class="scroller"><div id="mapList"></div>
+    <div class="scroller">
+      <header class="hero">
+        <div class="hero-art">
+          <svg class="mark-live" id="mapMark" viewBox="0 0 108 108" aria-hidden="true">
+            <g class="mk-half mk-l"><path d="M26 54 L54 26 L54 43 L66 49 L66 59 L54 65 L54 82 Z" fill="url(#mk-bone)"/></g>
+            <g class="mk-half mk-r"><path d="M54 26 L82 54 L54 82 L54 65 L66 59 L66 49 L54 43 Z" fill="url(#mk-crim)"/></g>
+            <g class="mk-seam" clip-path="url(#mk-solid)">
+              <path d="M54 24 L54 43 L66 49 L66 59 L54 65 L54 84" fill="none" stroke="#FF4B4F" stroke-width="9" stroke-linejoin="round" opacity="0.3"/>
+              <path d="M54 24 L54 43 L66 49 L66 59 L54 65 L54 84" fill="none" stroke="url(#mk-seam)" stroke-width="3.4" stroke-linejoin="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="hero-txt">
+          <p class="eyebrow">The grand map</p>
+          <p class="hero-n"><b id="mapDone">0</b><span id="mapTotal"></span></p>
+          <div class="hero-bar"><i id="mapBar"></i></div>
+        </div>
+      </header>
+      <div id="mapList"></div>
       <p class="colophon">Twenty five centuries, three regions, one kernel.</p>
     </div>
   </section>
 
   <!-- DAILY -->
   <section class="screen view" id="v-daily" hidden>
-    <header class="bar bar-plain">
-      <div class="bar-mid"><p class="bar-title" id="dDay"></p><p class="bar-sub" id="dDate"></p></div>
-    </header>
     <div class="scroller">
-      <p class="streak" id="dStreak"></p>
+      <header class="head">
+        <p class="eyebrow" id="dDay"></p>
+        <h1 class="head-h" id="dDate"></h1>
+        <p class="streak" id="dStreak"></p>
+      </header>
 
       <div class="envelope" id="dEnvelope" hidden>
-        <div class="env-seal" id="dSeal">∴</div>
+        <div class="env-seal" id="dSeal"><svg class="mark-sm" viewBox="0 0 108 108" aria-hidden="true"><use href="#mark"/></svg></div>
         <p class="env-tone" id="dTone"></p>
-        <p class="env-note">One theorem, the same one for everyone, chosen by today’s date.</p>
+        <p class="env-note">One theorem, the same one for everyone, chosen by today&rsquo;s date.</p>
         <button class="btn" id="dOpen" type="button">Break the seal</button>
       </div>
 
@@ -71,11 +201,10 @@
         <div class="grid" id="dShape"></div>
         <p class="res-score" id="dScore"></p>
         <p class="crown" id="dCrown"></p>
-        <button class="btn" id="dShare" type="button">Share the shape</button>
+        <button class="btn" id="dShare" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-share"/></svg>Share the shape</button>
         <p class="help">The grid shows the shape of your proof tree and nothing else. It gives no step away.</p>
       </div>
 
-      <hr class="rule faint">
       <p class="label">The last thirty days</p>
       <div class="archive" id="dArchive"></div>
       <p class="help">Dailies are computed from the date on this device, so they work with no connection
@@ -85,10 +214,11 @@
 
   <!-- FORGE -->
   <section class="screen view" id="v-forge" hidden>
-    <header class="bar bar-plain">
-      <div class="bar-mid"><p class="bar-title">The Forge</p><p class="bar-sub">Drills, built fresh each time</p></div>
-    </header>
     <div class="scroller">
+      <header class="head">
+        <p class="eyebrow">Drills, built fresh each time</p>
+        <h1 class="head-h">The Forge</h1>
+      </header>
       <p class="lead">Pick a move and the forge grows a new theorem around it, then checks that it can be
         finished before handing it to you. Mastery fades over a few weeks, which is what brings you back.</p>
       <div id="forgeList"></div>
@@ -97,34 +227,43 @@
 
   <!-- SATCHEL -->
   <section class="screen view" id="v-satchel" hidden>
-    <header class="bar bar-plain">
-      <div class="bar-mid"><p class="bar-title">Satchel</p><p class="bar-sub">Everything you have proved</p></div>
-    </header>
     <div class="scroller">
+      <header class="head">
+        <p class="eyebrow">Everything you have proved</p>
+        <h1 class="head-h">Satchel</h1>
+      </header>
       <p class="lead">Every theorem you finish becomes a tool you keep. Tap any one to watch your own proof
         rebuild itself, step by step.</p>
       <div id="satchelList"></div>
-      <p class="empty" id="satchelEmpty" hidden>Nothing yet. Prove one theorem and it becomes a tool you keep.</p>
+      <div class="empty" id="satchelEmpty" hidden>
+        <svg class="empty-art" viewBox="0 0 240 152" aria-hidden="true">
+          <path class="e-edge" d="M120 46 C120 72 66 66 66 94 M120 46 C120 72 174 66 174 94"/>
+          <use href="#mark-open" x="88" y="8" width="64" height="64"/>
+          <use href="#mark-open" x="34" y="62" width="64" height="64"/>
+          <use href="#mark-open" x="142" y="62" width="64" height="64"/>
+        </svg>
+        <p>Nothing yet. Prove one theorem and it becomes a tool you keep.</p>
+      </div>
     </div>
   </section>
 
   <!-- PROFILE -->
   <section class="screen view" id="v-profile" hidden>
-    <header class="bar bar-plain">
-      <div class="bar-mid"><p class="bar-title">You</p><p class="bar-sub">Kept on this device only</p></div>
-    </header>
     <div class="scroller">
+      <header class="head">
+        <p class="eyebrow">Kept on this device only</p>
+        <h1 class="head-h">You</h1>
+      </header>
       <div class="stats">
-        <div class="stat"><span class="k">Rigor</span><span class="v" id="pRigor"></span></div>
+        <div class="stat wide"><span class="k">Rigor</span><span class="v" id="pRigor"></span></div>
         <div class="stat"><span class="k">Seals</span><span class="v" id="pSeals"></span></div>
+        <div class="stat"><span class="k">Daily streak</span><span class="v" id="pStreak"></span></div>
         <div class="stat"><span class="k">Gold crowns</span><span class="v" id="pGold"></span></div>
         <div class="stat"><span class="k">Silver crowns</span><span class="v" id="pSilver"></span></div>
-        <div class="stat"><span class="k">Daily streak</span><span class="v" id="pStreak"></span></div>
       </div>
       <p class="help">Rigor is a local score. There is no server behind it and no leaderboard to climb,
         so it only ever measures you against the shortest known proof.</p>
 
-      <hr class="rule faint">
       <h2 class="h2">Settings</h2>
       <div class="field row"><div><label for="setSound">Sound</label>
         <p class="help">Woodblock clicks and the closing chord, synthesised on the device.</p></div>
@@ -133,30 +272,32 @@
         <p class="help">A short thunk when a step snaps home.</p></div>
         <input type="checkbox" id="setHaptics"></div>
       <div class="field row"><div><label for="setNotify">Daily reminder</label>
-        <p class="help">One notification a day, only until you have solved that day’s proof. Off by default.</p></div>
+        <p class="help">One notification a day, only until you have solved that day&rsquo;s proof. Off by default.</p></div>
         <input type="checkbox" id="setNotify"></div>
       <div class="field" id="setTimeRow" hidden><label for="setTime">Reminder time</label>
         <input type="time" id="setTime"></div>
 
-      <hr class="rule faint">
       <h2 class="h2">Your progress</h2>
-      <p class="help">Everything lives in this app’s storage on this phone. Nothing is uploaded, because
+      <p class="help">Everything lives in this app&rsquo;s storage on this phone. Nothing is uploaded, because
         the app cannot reach the network at all.</p>
       <div class="btnrow">
-        <button class="btn ghost small" id="exportBtn" type="button">Export as JSON</button>
-        <button class="btn ghost small danger" id="eraseBtn" type="button">Erase everything</button>
+        <button class="btn ghost small" id="exportBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-export"/></svg>Export as JSON</button>
+        <button class="btn ghost small" id="importBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-restore"/></svg>Restore from a file</button>
+        <button class="btn ghost small danger" id="eraseBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-erase"/></svg>Erase everything</button>
       </div>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <p class="inline-note" id="importNote" hidden></p>
 
-      <p class="colophon">Axiom. Rigor as play.<br>Free, complete, and offline. Version 1.0</p>
+      <p class="colophon">Axiom. Rigor as play.<br>Free, complete, and offline. Version 1.0.1</p>
     </div>
   </section>
 
   <!-- PROOF BOARD -->
   <section class="screen" id="v-board" hidden>
     <header class="bar">
-      <button class="icon" id="bBack" type="button" aria-label="Leave this proof">Leave</button>
+      <button class="icon" id="bBack" type="button" aria-label="Leave this proof"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg></button>
       <div class="bar-mid"><p class="bar-title" id="bTitle"></p><p class="bar-sub" id="bSub"></p></div>
-      <button class="icon" id="bHint" type="button" aria-label="Ask for a hint">Hint</button>
+      <button class="icon" id="bHint" type="button" aria-label="Ask for a hint"><svg class="ic" aria-hidden="true"><use href="#ic-hint"/></svg></button>
     </header>
     <div class="statement" id="bStatement"></div>
     <div class="treewrap" id="treeWrap"><div class="treefit" id="treeFit"><div class="tree" id="tree"></div></div></div>
@@ -169,7 +310,7 @@
           <p class="panel-goal" id="pGoal"></p>
           <span class="panel-actions">
             <span class="par" id="bPar"></span>
-            <button class="btn ghost small" id="bUndo" type="button">Undo</button>
+            <button class="btn ghost small" id="bUndo" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-undo"/></svg>Undo</button>
           </span>
         </div>
         <p class="panel-know" id="pKnowHead"></p>
@@ -185,7 +326,7 @@
   <!-- VIGNETTE -->
   <section class="screen" id="v-vignette" hidden>
     <header class="bar">
-      <button class="icon" id="vgBack" type="button" aria-label="Back">Back</button>
+      <button class="icon" id="vgBack" type="button" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#ic-back"/></svg></button>
       <div class="bar-mid"><p class="bar-title">Keystone</p><p class="bar-sub" id="vgEra"></p></div>
       <span class="icon spacer"></span>
     </header>
@@ -197,11 +338,11 @@
 </main>
 
 <nav id="tabs" hidden>
-  <button data-view="map" class="tab is-on" type="button">Map</button>
-  <button data-view="daily" class="tab" type="button">Daily</button>
-  <button data-view="forge" class="tab" type="button">Forge</button>
-  <button data-view="satchel" class="tab" type="button">Satchel</button>
-  <button data-view="profile" class="tab" type="button">You</button>
+  <button data-view="map" class="tab is-on" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-map"/></svg><span>Map</span></button>
+  <button data-view="daily" class="tab" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-daily"/></svg><span>Daily</span></button>
+  <button data-view="forge" class="tab" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-forge"/></svg><span>Forge</span></button>
+  <button data-view="satchel" class="tab" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-satchel"/></svg><span>Satchel</span></button>
+  <button data-view="profile" class="tab" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-you"/></svg><span>You</span></button>
 </nav>
 
 <!-- term picker -->
@@ -228,8 +369,13 @@
 <!-- victory -->
 <div id="victory" class="sheet" hidden>
   <div class="sheet-panel">
-    <p class="v-eyebrow">Proved</p>
-    <p class="v-title" id="vTitle"></p>
+    <div class="v-head">
+      <svg class="mark-sm v-mark" viewBox="0 0 108 108" aria-hidden="true"><use href="#mark"/></svg>
+      <div>
+        <p class="v-eyebrow">Proved</p>
+        <p class="v-title" id="vTitle"></p>
+      </div>
+    </div>
     <p class="v-verify" id="vVerify"></p>
     <div class="v-nums">
       <div><span class="v-n" id="vMoves"></span><span class="v-k">moves</span></div>
@@ -241,7 +387,7 @@
     <p class="v-lemma" id="vLemma"></p>
     <div class="btnrow">
       <button class="btn" id="vNext" type="button">Next theorem</button>
-      <button class="btn ghost small" id="vShare" type="button">Share the shape</button>
+      <button class="btn ghost small" id="vShare" type="button"><svg class="ic" aria-hidden="true"><use href="#ic-share"/></svg>Share the shape</button>
       <button class="btn ghost small" id="vVignette" type="button" hidden>Read the story</button>
       <button class="btn ghost small" id="vBack" type="button">Done</button>
     </div>

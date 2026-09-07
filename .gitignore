@@ -18,3 +18,6 @@ node_modules/
 android/.kotlin/
 keystore.properties
 local.properties
+
+# drive.js output
+test/shots/

@@ -13,22 +13,35 @@ const Store = (function () {
     settings: { sound: true, haptics: true, notify: false, notifyTime: '19:00' }
   };
 
+  /* A record is only trusted field by field: a string where a map belongs would make
+     Object.keys count its letters, and the map would then claim proofs nobody made. */
+  const asMap = v => (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+  const clean = (m, ok) => {
+    const out = {};
+    Object.keys(asMap(m)).forEach(k => { const v = m[k]; if (ok(v)) out[k] = v; });
+    return out;
+  };
+
+  function sanitize(d) {
+    d = asMap(d);
+    return {
+      onboarded: !!d.onboarded,
+      installed: typeof d.installed === 'string' ? d.installed : null,
+      solved: clean(d.solved, v => v && typeof v === 'object' && typeof v.len === 'number'),
+      daily: clean(d.daily, v => v && typeof v === 'object' && typeof v.len === 'number'),
+      forge: clean(d.forge, v => v && typeof v === 'object' && typeof v.done === 'number'),
+      rigor: typeof d.rigor === 'number' && isFinite(d.rigor) ? d.rigor : 1000,
+      seen: clean(d.seen, () => true),
+      settings: Object.assign({}, DEFAULTS.settings, asMap(d.settings))
+    };
+  }
+
   let db = load();
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
       if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
-      const d = JSON.parse(raw);
-      return {
-        onboarded: !!d.onboarded,
-        installed: d.installed || null,
-        solved: d.solved || {},
-        daily: d.daily || {},
-        forge: d.forge || {},
-        rigor: typeof d.rigor === 'number' ? d.rigor : 1000,
-        seen: d.seen || {},
-        settings: Object.assign({}, DEFAULTS.settings, d.settings || {})
-      };
+      return sanitize(JSON.parse(raw));
     } catch (e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
@@ -160,6 +173,25 @@ const Store = (function () {
   function exportJson() {
     return JSON.stringify({ app: 'axiom', version: 1, exported: today(), data: db }, null, 2);
   }
+  /** Read an exported file back. Returns { ok, reason, proofs } and never half-applies. */
+  function inspectJson(text) {
+    let f = null;
+    try { f = JSON.parse(text); } catch (e) { return { ok: false, reason: 'That file is not readable as JSON.' }; }
+    if (!f || typeof f !== 'object') return { ok: false, reason: 'That file is not an Axiom export.' };
+    if (f.app !== 'axiom') return { ok: false, reason: 'That file was exported by a different app.' };
+    const d = sanitize(f.data);
+    const proofs = Object.keys(d.solved).length;
+    const dailies = Object.keys(d.daily).length;
+    if (!proofs && !dailies && !d.onboarded) return { ok: false, reason: 'That export has no progress in it.' };
+    return { ok: true, db: d, proofs: proofs, dailies: dailies, exported: typeof f.exported === 'string' ? f.exported : null };
+  }
+  /** Replace everything with a checked export. */
+  function restore(checked) {
+    if (!checked || !checked.ok) return false;
+    db = checked.db;
+    save();
+    return true;
+  }
   function erase() { db = JSON.parse(JSON.stringify(DEFAULTS)); try { localStorage.removeItem(KEY); } catch (e) {} }
 
   return { today: today, addDays: addDays, longDate: longDate, shortDate: shortDate, dayNumber: dayNumber,
@@ -167,5 +199,6 @@ const Store = (function () {
            regionOpen: regionOpen, regionSolved: regionSolved, crownFor: crownFor, record: record,
            recordDaily: recordDaily, dailyResult: dailyResult, streak: streak, archive: archive,
            forgeDone: forgeDone, mastery: mastery, settings: settings, onboarded: onboarded,
-           seen: seen, rigor: rigor, exportJson: exportJson, erase: erase };
+           seen: seen, rigor: rigor, exportJson: exportJson, inspectJson: inspectJson,
+           restore: restore, erase: erase };
 })();

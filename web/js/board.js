@@ -42,18 +42,23 @@ const Board = (function () {
     document.body.classList.add('on-board');
     App.go('board');
     draw();
-    if (cur.replay) setTimeout(replayStep, 700);
+    if (cur.replay) cur.replayAtT = setTimeout(replayStep, 700);
   }
 
   function close() {
     document.body.classList.remove('on-board');
+    if (cur) { clearTimeout(cur.victoryAt); clearTimeout(cur.replayAtT); }
+    $('#victory').hidden = true;
+    $('#hint').hidden = true;
+    $('#chooser').hidden = true;
+    chooser = null;
     cur = null;
     if (onExit) { const f = onExit; onExit = null; f(); }
     else App.go('map');
   }
 
   /* ---------------- drawing the tree ---------------- */
-  const GAPX = 16, GAPY = 27;
+  const GAPX = 16, GAPY = 34;   // room for a rule label of up to two lines under each row
 
   function nodeClass(n) {
     let c = 'node';
@@ -121,7 +126,8 @@ const Board = (function () {
       if (n.closed && !n.kids.length) {
         const cap = document.createElement('span');
         cap.className = 'ncap';
-        cap.textContent = '\u220E ' + (n.rule ? ruleName(st, n) : 'already known');
+        cap.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#ic-qed"/></svg><span></span>';
+        cap.querySelector('span').textContent = n.rule ? ruleName(st, n) : 'already known';
         el.appendChild(cap);
       }
       tree.appendChild(el);
@@ -136,11 +142,34 @@ const Board = (function () {
       n._h = Math.ceil(r.height);
     });
 
+    // The rule label sits in the gap under its row, and a long tool name wraps to two or
+    // three lines. Measure the labels first, then open each gap wide enough for the tallest
+    // one in that row, or a label lands on the goal below it.
+    const labs = {};
+    const labH = [];
+    order.forEach(id => {
+      const n = st.nodes[id];
+      if (!n.kids.length) return;
+      const text = ruleName(st, n);
+      if (!text) return;
+      const el = document.createElement('span');
+      el.className = 'rulelab';
+      el.textContent = text;
+      tree.appendChild(el);
+      const r = el.getBoundingClientRect();
+      el._w = Math.ceil(r.width) + 1;
+      el._h = Math.ceil(r.height);
+      labs[id] = el;
+      labH[n._d] = Math.max(labH[n._d] || 0, el._h);
+    });
+
     const rowH = [];
     order.forEach(id => { const n = st.nodes[id]; rowH[n._d] = Math.max(rowH[n._d] || 0, n._h); });
+    const gapAfter = [];
+    for (let d = 0; d < rowH.length; d++) gapAfter[d] = Math.max(GAPY, (labH[d] || 0) + 13);
     const rowY = []; let y = 0;
-    for (let d = 0; d < rowH.length; d++) { rowY[d] = y; y += rowH[d] + GAPY; }
-    const totalH = Math.max(1, y - GAPY);
+    for (let d = 0; d < rowH.length; d++) { rowY[d] = y; y += rowH[d] + gapAfter[d]; }
+    const totalH = Math.max(1, y - gapAfter[rowH.length - 1]);
 
     (function width(id) {
       const n = st.nodes[id];
@@ -171,22 +200,20 @@ const Board = (function () {
     order.forEach(id => {
       const n = st.nodes[id];
       if (!n.kids.length) return;
+      const bend = gapAfter[n._d] * 0.6;
       const px = n._x + n._w / 2, py = n._y + n._h;
       n.kids.forEach(k => {
         const c = st.nodes[k];
         const cx = c._x + c._w / 2, cy = c._y;
         edges += '<path class="edge' + (c.closed ? ' lit' : '') + '" d="M' + px + ' ' + py +
-                 ' C' + px + ' ' + (py + GAPY * 0.6) + ' ' + cx + ' ' + (cy - GAPY * 0.6) + ' ' + cx + ' ' + cy + '"/>';
+                 ' C' + px + ' ' + (py + bend) + ' ' + cx + ' ' + (cy - bend) + ' ' + cx + ' ' + cy + '"/>';
       });
-      const lab = ruleName(st, n);
-      if (lab) {
-        const el = document.createElement('span');
-        el.className = 'rulelab';
-        el.textContent = lab;
-        tree.appendChild(el);
-        el.style.left = (px - el.offsetWidth / 2) + 'px';
+      const el = labs[id];
+      if (el) {
         // sit in the gap below the whole row, so a short node's label cannot land on a tall neighbour
-        el.style.top = (rowY[n._d] + rowH[n._d] + 4) + 'px';
+        el.style.left = Math.max(0, px - el._w / 2) + 'px';
+        el.style.top = (rowY[n._d] + rowH[n._d] + 5) + 'px';
+        el.style.width = el._w + 'px';
       }
     });
     svg.setAttribute('viewBox', '0 0 ' + totalW + ' ' + totalH);
@@ -215,7 +242,10 @@ const Board = (function () {
     });
 
     if (!cur.replay) drawPanel();
-    $('#bPar').textContent = Kernel.length(st) + ' of par ' + (cur.thm.par || '?');
+    $('#bPar').innerHTML = '<b></b> of par <b></b>';
+    const parts = $('#bPar').querySelectorAll('b');
+    parts[0].textContent = Kernel.length(st);
+    parts[1].textContent = cur.thm.par || '?';
 
     // keep the goal you are working on in sight
     const live = st.nodes[cur.focus];
@@ -440,7 +470,7 @@ const Board = (function () {
       }
       function place(x, y) {
         ghost.style.left = x + 'px';
-        ghost.style.top = y + 'px';
+        ghost.style.top = (y - 18) + 'px';
         ghost.style.display = 'none';
         const under = document.elementFromPoint(x, y);
         ghost.style.display = '';
@@ -545,7 +575,7 @@ const Board = (function () {
       rows[d].push(n.kids.length ? 'mid' : 'leaf');
       n.kids.forEach(k => walk(k, d + 1));
     })(st.root, 0);
-    return rows.map(r => r.map(x => x === 'leaf' ? '🟩' : '🟨').join('')).join('\n');
+    return rows.map(r => r.map(x => x === 'leaf' ? '🟥' : '⬛').join('')).join('\n');
   }
 
   function finish() {
@@ -575,7 +605,9 @@ const Board = (function () {
     }, 120);
 
     let res = { gain: 0, improved: true };
-    const proof = st.history.map(h => h.rule);
+    // { n: goal id, r: rule }. 1.0.0 recorded a flat rule list and replay still reads those,
+    // but it could only rebuild proofs built strictly down the leftmost branch.
+    const proof = st.history.map(h => ({ n: h.node, r: h.rule }));
     if (cur.mode === 'forge') {
       Store.forgeDone(cur.thm.forge);
     } else {
@@ -583,7 +615,10 @@ const Board = (function () {
       if (cur.mode === 'daily') Store.recordDaily(cur.date, cur.thm, len, cur.hints, secs, shape(st));
     }
 
-    setTimeout(() => showVictory(len, par, crown, secs, res, v), byDepth.length * 70 + 320);
+    cur.victoryAt = setTimeout(() => {
+      if (!cur || !cur.done) return;              // the player left while the tree was lighting
+      showVictory(len, par, crown, secs, res, v);
+    }, byDepth.length * 70 + 320);
   }
 
   function showVictory(len, par, crown, secs, res, v) {
@@ -625,18 +660,26 @@ const Board = (function () {
   }
 
   /* ---------------- replay ---------------- */
+  /** A step is either { n, r } from 1.0.1 or a bare rule from 1.0.0. */
+  function replayTarget(entry, open) {
+    if (!entry || !entry.r) return open[0];
+    const nd = cur.st.nodes[entry.n];
+    return (nd && !nd.closed && !nd.kids.length) ? entry.n : open[0];
+  }
+
   function replayStep() {
-    if (!cur || !cur.replay) return;
+    if (!cur || !cur.replay || cur.paused) return;
     if (cur.replayAt >= cur.replay.length) { $('#replayNote').textContent = 'That was your proof, exactly as you built it.'; return; }
     const open = Kernel.openGoals(cur.st);
     if (!open.length) return;
-    const ok = Kernel.apply(cur.st, open[0], cur.replay[cur.replayAt++]);
-    if (!ok) { $('#replayNote').textContent = 'This proof was recorded under an older version of the theorem.'; return; }
+    const entry = cur.replay[cur.replayAt++];
+    const ok = Kernel.apply(cur.st, replayTarget(entry, open), entry && entry.r ? entry.r : entry);
+    if (!ok) { $('#replayNote').textContent = 'This recording could not be rebuilt. The proof itself still counts.'; return; }
     Sound.tick();
     draw();
     $('#replayNote').textContent = 'Step ' + cur.replayAt + ' of ' + cur.replay.length;
-    if (cur.replayAt < cur.replay.length) setTimeout(replayStep, 750);
-    else setTimeout(() => { $('#replayNote').textContent = 'That was your proof, exactly as you built it.'; }, 400);
+    if (cur.replayAt < cur.replay.length) cur.replayAtT = setTimeout(replayStep, 750);
+    else cur.replayAtT = setTimeout(() => { $('#replayNote').textContent = 'That was your proof, exactly as you built it.'; }, 400);
   }
 
   /* ---------------- wiring ---------------- */
@@ -667,5 +710,19 @@ const Board = (function () {
     return false;
   }
 
-  return { init: init, open: open, close: close, back: back, isOpen: () => !!cur };
+  /* The shell calls these when the app leaves and returns. Nothing may keep ticking
+     while the player is not looking: not the replay, not the cascade. */
+  function pause() {
+    if (!cur) return;
+    cur.paused = true;
+    clearTimeout(cur.replayAtT);
+  }
+  function resume() {
+    if (!cur || !cur.paused) return;
+    cur.paused = false;
+    if (cur.replay && cur.replayAt < cur.replay.length) cur.replayAtT = setTimeout(replayStep, 400);
+  }
+
+  return { init: init, open: open, close: close, back: back, pause: pause, resume: resume,
+           isOpen: () => !!cur };
 })();
