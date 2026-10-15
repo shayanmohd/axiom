@@ -23,3 +23,6 @@ local.properties
 test/shots/
 test/rshots/
 test/rshots-rm/
+
+# internal plan: competitor and pricing notes stay private
+BLUEPRINT.md
