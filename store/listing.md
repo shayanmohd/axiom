@@ -79,7 +79,7 @@ Bring a cup of tea. Some of these took people a thousand years.
 ## Contact
 Email: shayanm2002@gmail.com
 Website: https://shayanmohd.github.io/axiom/
-Privacy policy: https://shayanmohd.github.io/axiom/privacy-policy.html
+Privacy policy: https://apps.mohdshayan.com/privacy-policies/axiom-privacy-policy.html
 
 ## Declarations (derived from the manifest and the code, not assumed)
 - Permissions declared: VIBRATE, POST_NOTIFICATIONS. No INTERNET.
